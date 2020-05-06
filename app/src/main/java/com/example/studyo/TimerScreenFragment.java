@@ -62,6 +62,64 @@ public class TimerScreenFragment extends Fragment {
         triggerTimer.setOnClickListener(new TriggerTimerOnClickListener());
 
         studyTimerBar = view.findViewById(R.id.seekBar_study);
+        setSeekBarListener();
+    }
+
+    private class TriggerTimerOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            if (!isRunning) {
+                //  Start the timer
+                isRunning = true;
+                seconds = initSecs;
+                timerHandler.post(timerRunnable);
+                ((Button)v).setText("Stop");
+
+                //  Stop the user from changing the status of the progress bar
+                setStudyTimerBarStatus(false, 100);
+            }
+            else {
+                isRunning = false;
+                timerHandler.removeCallbacks(timerRunnable);
+                timerView.setText(SecondsToTimeFormat(initSecs));
+                ((Button)v).setText("Start");
+
+                //  Allow the user to change the progress bar
+                setStudyTimerBarStatus(true, initSecs - 10 * 60);
+            }
+        }
+    }
+
+    //  a Task object that do: decrease the timer and update the UI
+    class TimerRunnable implements Runnable {
+        @Override
+        public void run() {
+            //  Decrease the seconds variable for each run()
+            if (isRunning) {
+                seconds--;
+                float progress = studyTimerBar.getProgress();
+                studyTimerBar.setProgress(progress - 100 /(float)initSecs);
+            }
+
+            timerView.setText(SecondsToTimeFormat(seconds));
+
+            //  If the timer reach 0, reset the timer/run a new fragment
+            if (seconds == 0) {
+                isRunning = false;
+                timerHandler.removeCallbacks(timerRunnable);
+                timerView.setText(SecondsToTimeFormat(initSecs));
+                Button b = getActivity().findViewById(R.id.button_trigger_timer);
+                b.setText("Start");
+                setStudyTimerBarStatus(true, initSecs - 10 * 60);
+                return;
+            }
+
+            //  Recurse the TimeRunnable object
+            timerHandler.postDelayed(this, 1000);
+        }
+    }
+
+    private void setSeekBarListener() {
         studyTimerBar.setOnRoundedSeekChangeListener(new OnCircularSeekBarChangeListener() {
             @Override
             public void onProgressChange(CircularSeekBar CircularSeekBar, float progress) {
@@ -80,47 +138,22 @@ public class TimerScreenFragment extends Fragment {
         });
     }
 
-    private class TriggerTimerOnClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            if (!isRunning) {
-                //  Start the timer
-                isRunning = true;
-                seconds = initSecs;
-                timerHandler.post(timerRunnable);
-                ((Button)v).setText("Stop");
-            }
-            else {
-                isRunning = false;
-                timerHandler.removeCallbacks(timerRunnable);
-                timerView.setText(SecondsToTimeFormat(initSecs));
-                ((Button)v).setText("Start");
-            }
-        }
-    }
-
-    //  a Task object that do: decrease the timer and update the UI
-    class TimerRunnable implements Runnable {
-        @Override
-        public void run() {
-            //  Decrease the seconds variable for each run()
-            if (isRunning) seconds--;
-
-            timerView.setText(SecondsToTimeFormat(seconds));
-
-            //  Recurse the TimeRunnable object
-            timerHandler.postDelayed(this, 1000);
-        }
-    }
-
     //  Convert seconds -> Date object -> String
     private String SecondsToTimeFormat(int convertedTime) {
-        int minute = convertedTime / 60;
+        String minutes = String.valueOf(convertedTime / 60);
         String secs = String.valueOf(convertedTime % 60);
+
+        if (minutes.length() <= 1) minutes = "0" + minutes;
         if (secs.length() <= 1) secs = "0" + secs;
 
-        String formattedTime = minute + " : " + secs;
+        String formattedTime = minutes + " : " + secs;
 
         return formattedTime;
+    }
+
+    private void setStudyTimerBarStatus (Boolean bool, float progress) {
+        studyTimerBar.setEnabled(bool);
+        studyTimerBar.setIndicatorEnabled(bool);
+        studyTimerBar.setProgress(progress);
     }
 }
