@@ -6,12 +6,12 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-public class StatisticRepository {
+public class StudyoRepository {
     private PomoDao pomoDao;
     private LiveData<List<PomoRecord>> pomoRecords;
 
-    StatisticRepository(Application application) {
-        StatisticDatabase db = StatisticDatabase.getDatabase(application);
+    StudyoRepository(Application application) {
+        StudyoDatabase db = StudyoDatabase.getDatabase(application);
         pomoDao = db.pomoDao();
         pomoRecords = pomoDao.getAllPomoRecords();
     }
@@ -21,7 +21,7 @@ public class StatisticRepository {
     }
 
     void insert(final PomoRecord pomoRecord) {
-        StatisticDatabase.databaseWriteExecutor.execute(() -> {
+        StudyoDatabase.databaseWriteExecutor.execute(() -> {
             pomoDao.insert(pomoRecord);
         });
     }

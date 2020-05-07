@@ -32,7 +32,7 @@ public class TimerScreenFragment extends Fragment {
     private TextView timerView;
     private CircularSeekBar studyTimerBar;
 
-    private StatisticViewModel sViewModel;
+    private StudyoViewModel sViewModel;
 
     public TimerScreenFragment() {
         // Required empty public constructor
@@ -63,7 +63,9 @@ public class TimerScreenFragment extends Fragment {
         studyTimerBar = view.findViewById(R.id.seekBar_study);
         setSeekBarListener();
 
-        sViewModel = new ViewModelProvider(requireActivity()).get(StatisticViewModel.class);
+        // !!!!
+        ViewModelProvider.AndroidViewModelFactory avmFactory = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication());
+        sViewModel = new ViewModelProvider(requireActivity(), avmFactory).get(StudyoViewModel.class);
     }
 
     private class TriggerTimerOnClickListener implements View.OnClickListener {
@@ -110,8 +112,8 @@ public class TimerScreenFragment extends Fragment {
                 isRunning = false;
                 timerHandler.removeCallbacks(timerRunnable);
                 timerView.setText(SecondsToTimeFormat(initSecs));
-                Button b = getActivity().findViewById(R.id.button_trigger_timer);
-                b.setText("Start");
+//                Button b = getActivity().findViewById(R.id.button_trigger_timer);
+//                b.setText("Start");
                 setStudyTimerBarStatus(true, initSecs - 10 * ONE_MINUTE);
                 sViewModel.insert(new PomoRecord(true));
                 return;

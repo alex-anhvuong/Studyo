@@ -11,18 +11,18 @@ import java.util.concurrent.Executors;
 
 
 @Database(entities = {PomoRecord.class}, version = 1, exportSchema = false)
-public abstract class StatisticDatabase extends RoomDatabase {
+public abstract class StudyoDatabase extends RoomDatabase {
     public abstract PomoDao pomoDao();
 
-    private static volatile StatisticDatabase INSTANCE;
+    private static volatile StudyoDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
     static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    static StatisticDatabase getDatabase(final Context context) {
+    static StudyoDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
-            synchronized (StatisticDatabase.class) {
+            synchronized (StudyoDatabase.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), StatisticDatabase.class, "statistic_database").build();
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), StudyoDatabase.class, "statistic_database").build();
                 }
             }
         }
