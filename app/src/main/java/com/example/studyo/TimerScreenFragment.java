@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -17,23 +18,21 @@ import android.widget.TextView;
 import com.github.stefanodp91.android.circularseekbar.CircularSeekBar;
 import com.github.stefanodp91.android.circularseekbar.OnCircularSeekBarChangeListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class TimerScreenFragment extends Fragment {
 
+    private int ONE_MINUTE = 1;
     private Boolean isRunning;
     private int initSecs, seconds;
     private Handler timerHandler;
     private Runnable timerRunnable;
     private TextView timerView;
     private CircularSeekBar studyTimerBar;
+
+    private StatisticViewModel sViewModel;
 
     public TimerScreenFragment() {
         // Required empty public constructor
@@ -50,7 +49,7 @@ public class TimerScreenFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        initSecs = 10 * 60;
+        initSecs = 10 * ONE_MINUTE;
         isRunning = false;
         timerHandler = new Handler(Looper.getMainLooper());
         timerRunnable = new TimerRunnable();
@@ -63,6 +62,8 @@ public class TimerScreenFragment extends Fragment {
 
         studyTimerBar = view.findViewById(R.id.seekBar_study);
         setSeekBarListener();
+
+        sViewModel = new ViewModelProvider(requireActivity()).get(StatisticViewModel.class);
     }
 
     private class TriggerTimerOnClickListener implements View.OnClickListener {
@@ -85,7 +86,8 @@ public class TimerScreenFragment extends Fragment {
                 ((Button)v).setText("Start");
 
                 //  Allow the user to change the progress bar
-                setStudyTimerBarStatus(true, initSecs - 10 * 60);
+                setStudyTimerBarStatus(true, initSecs - 10 * ONE_MINUTE);
+                sViewModel.insert(new PomoRecord(false));
             }
         }
     }
@@ -110,7 +112,8 @@ public class TimerScreenFragment extends Fragment {
                 timerView.setText(SecondsToTimeFormat(initSecs));
                 Button b = getActivity().findViewById(R.id.button_trigger_timer);
                 b.setText("Start");
-                setStudyTimerBarStatus(true, initSecs - 10 * 60);
+                setStudyTimerBarStatus(true, initSecs - 10 * ONE_MINUTE);
+                sViewModel.insert(new PomoRecord(true));
                 return;
             }
 
@@ -123,7 +126,7 @@ public class TimerScreenFragment extends Fragment {
         studyTimerBar.setOnRoundedSeekChangeListener(new OnCircularSeekBarChangeListener() {
             @Override
             public void onProgressChange(CircularSeekBar CircularSeekBar, float progress) {
-                initSecs = 10 * 60 + (int)Math.floor(progress/5) * 5 * 60;
+                initSecs = 10 * ONE_MINUTE + (int)Math.floor(progress/5) * 5 * ONE_MINUTE;
                 timerView.setText(SecondsToTimeFormat(initSecs));
             }
 
@@ -140,8 +143,8 @@ public class TimerScreenFragment extends Fragment {
 
     //  Convert seconds -> Date object -> String
     private String SecondsToTimeFormat(int convertedTime) {
-        String minutes = String.valueOf(convertedTime / 60);
-        String secs = String.valueOf(convertedTime % 60);
+        String minutes = String.valueOf(convertedTime / ONE_MINUTE);
+        String secs = String.valueOf(convertedTime % ONE_MINUTE);
 
         if (minutes.length() <= 1) minutes = "0" + minutes;
         if (secs.length() <= 1) secs = "0" + secs;

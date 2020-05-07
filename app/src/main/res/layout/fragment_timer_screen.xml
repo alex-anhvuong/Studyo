@@ -43,7 +43,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.232"
         app:cs_arcRadius="85dp"
-        app:cs_progressWidth="10dp"
+        app:cs_progressWidth="8dp"
+        app:cs_step="5"
         app:cs_color_list="@array/customer_color_list"
         />
 

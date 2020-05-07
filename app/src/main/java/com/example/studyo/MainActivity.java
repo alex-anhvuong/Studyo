@@ -32,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.action_timer:
                     selectedScreen = new TimerScreenFragment();
                     break;
+                case R.id.action_stats:
+                    selectedScreen = new StatisticScreenFragment();
+                    break;
                 default:
                     selectedScreen = new TimerScreenFragment();
             }
