@@ -26,6 +26,7 @@ public abstract class StudyoDatabase extends RoomDatabase {
                 }
             }
         }
+        databaseWriteExecutor.execute(() -> {INSTANCE.clearAllTables();});
         return INSTANCE;
     }
 }

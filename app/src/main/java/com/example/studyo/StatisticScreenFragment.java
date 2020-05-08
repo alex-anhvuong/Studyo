@@ -19,7 +19,12 @@ import java.util.List;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ *  StatisticScreenFragment
+ *
+ *  Usage: This fragment shows the statistic timer screen
+ *  Functionality:
+ *      - Show the stats of user's pomodoro status
+ *      - 
  */
 public class StatisticScreenFragment extends Fragment {
     private StudyoViewModel sViewModel;
@@ -51,7 +56,9 @@ public class StatisticScreenFragment extends Fragment {
                 Log.i(TAG, String.valueOf(pomoRecords.size()));
                 String data = "";
                 if (pomoRecords.size() != 0) {
-                    data = showDataView.getText().toString() + " " + pomoRecords.get(pomoRecords.size() - 1).getPmIsSuccessful();
+                    for (PomoRecord pRecords: pomoRecords) {
+                        data += pRecords.getPmID() + "&" +pRecords.getPmIsSuccessful().toString() + "/";
+                    }
                 }
                 showDataView.setText(data);
             }
