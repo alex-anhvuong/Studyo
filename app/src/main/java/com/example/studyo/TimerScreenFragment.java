@@ -35,14 +35,16 @@ public class TimerScreenFragment extends Fragment {
      *  Properties of the fragment
      */
     private int ONE_MINUTE = 1;
-    private Boolean isRunning;  //  The state of the timer (is running / paused)
-    private int initSecs;   //  initSecs is the time user will start count down from
-    private int seconds;    //  seconds is  the timer that is left
-    private Handler timerHandler;   //  a Handler run a task in the background
+    private Boolean isRunning = false;  //  The state of the timer (is running / paused)
+    private int initSecs = 10 * ONE_MINUTE;   //    The time user will start count down from
+    private Long endTime = Long.valueOf(0); //  Time stamp: endTime = initSecs + (the timestamp when user play the timer)
+    private int seconds;    //  The time that is left
+    private Handler timerHandler;   //  a Handler to run a task in the background
     private Runnable timerRunnable; //  the task to be run  (counting down)
     //  Views
     private TextView timerView; //  the displayed time
     private CircularSeekBar studyTimerBar;  //  the progress bar representation of the timer
+    private Button triggerTimerButton;
     //  Architecture Components
     private StudyoViewModel sViewModel;
 
@@ -59,45 +61,63 @@ public class TimerScreenFragment extends Fragment {
 
         //  Initiate the state of the timer
         if (savedInstanceState != null) {
-            Log.i(TAG, "Restore the state");
             initSecs = savedInstanceState.getInt("currentTimerInitSeconds");
-            seconds = savedInstanceState.getInt("currentTimerSeconds");
+            endTime = savedInstanceState.getLong("endTime");
             isRunning = savedInstanceState.getBoolean("currentTimerRunning");
-        } else {
-            initSecs = 10 * ONE_MINUTE;
-            isRunning = false;
+            Log.i(TAG, "Restore the state: " + initSecs + " " + isRunning);
         }
+
+        timerView = getActivity().findViewById(R.id.text_study_timer);
+        triggerTimerButton = getActivity().findViewById(R.id.button_trigger_timer);
+        studyTimerBar = getActivity().findViewById(R.id.seekBar_study);
+
         //  Define UI Thread's Looper as the looper of timerHandler
-        //  Define the Runnable
+        //  Define the runnable
         timerHandler = new Handler(Looper.getMainLooper());
         timerRunnable = new TimerRunnable();
-
-        timerView = view.findViewById(R.id.text_study_timer);
-        Button triggerTimer = view.findViewById(R.id.button_trigger_timer);
-        studyTimerBar = view.findViewById(R.id.seekBar_study);
-
-        //  Initiate timer view
-        if (!isRunning) timerView.setText(SecondsToTimeFormat(initSecs));
-        else {
-            timerView.setText(SecondsToTimeFormat(seconds));
-            triggerTimer.setText("Stop");
-        }
         //  Set onclick method for Start/Pause button
-        triggerTimer.setOnClickListener(new TriggerTimerOnClickListener());
+        triggerTimerButton.setOnClickListener(new TriggerTimerOnClickListener());
         //  Set event listener for the progress bar
         setSeekBarListener();
         //  Create a ViewModel to insert data into database
         ViewModelProvider.AndroidViewModelFactory avmFactory = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication());
         sViewModel = new ViewModelProvider(requireActivity(), avmFactory).get(StudyoViewModel.class);
+
+        //  Initiate timer view
+        if (!isRunning) {
+            timerView.setText(SecondsToTimeFormat(initSecs));
+        }
+        else {
+            //  endTime - current TimeStamp = the time we have left
+            int timeLeft = (int) ((endTime - System.currentTimeMillis()) / 1000);
+            if (timeLeft <=  0) {
+                //  timer has finished
+                SetSuccessAttempt();
+            } else {
+                //  Continue the timer from timeLeft
+                seconds = timeLeft;
+                timerView.setText(SecondsToTimeFormat(seconds));
+                setStudyTimerBarStatus(100 /(float)initSecs * (float)seconds);
+                timerHandler.post(timerRunnable);
+                triggerTimerButton.setText("Stop");
+            }
+        }
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.i(TAG, "Saving Fragment State");
-        outState.putInt("currentTimerSeconds", seconds);
-        outState.putBoolean("currentTimerRunning", isRunning);
         outState.putInt("currentTimerInitSeconds", initSecs);
+        outState.putLong("endTime", endTime);
+        outState.putBoolean("currentTimerRunning", isRunning);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //  Stop the callback when Fragment is destroyed
+        //  The timer will be continue when returning with our pre-defined endTime
+        timerHandler.removeCallbacks(timerRunnable);
     }
 
     /**
@@ -113,22 +133,22 @@ public class TimerScreenFragment extends Fragment {
                 isRunning = true;
                 ((Button)v).setText("Stop");
                 seconds = initSecs;
+                //  Predefine a timestamp in the future when the timer will finish
+                endTime = System.currentTimeMillis() + (long)initSecs * 1000;
 
                 //  Start the counting down in the background
                 timerHandler.post(timerRunnable);
-                //  Stop the user from changing the status of the progress bar
-                setStudyTimerBarStatus(false, 100);
+                //  Showing the progress starting from 100%
+                setStudyTimerBarStatus(100);
             }
-            else {  //  Stop the timer if it's running, counted as one failed pomodoro attempt
-                //  Stop the counting down
+            else {
+                //  Stop the timer if it's running, counted as one failed pomodoro attempt
                 timerHandler.removeCallbacks(timerRunnable);
-
                 isRunning = false;
                 ((Button)v).setText("Start");
                 timerView.setText(SecondsToTimeFormat(initSecs));
-
-                //  Allow the user to change the progress bar
-                setStudyTimerBarStatus(true, initSecs - 10 * ONE_MINUTE);
+                //  Reset the progress to our initial time
+                setStudyTimerBarStatus(initSecs - 10 * ONE_MINUTE);
                 //  Post this result to the database as a failed attempt
                 //  pmDate = current Date
                 //  pmTime = initSecs - seconds;
@@ -149,37 +169,66 @@ public class TimerScreenFragment extends Fragment {
             Log.i(TAG, "The time is " + seconds);
             //  Decrease "seconds" for each run()
             if (isRunning) {
+                //  Decrease the time & the progress's indicator
                 seconds--;
                 float progress = studyTimerBar.getProgress();
-                studyTimerBar.setProgress(progress - 100 /(float)initSecs);
+                setStudyTimerBarStatus(progress - 100 /(float)initSecs);
                 timerView.setText(SecondsToTimeFormat(seconds));
             }
 
             //  TO DO:
             //  If the timer reach 0, trigger a congratulation fragment
             if (seconds == 0) {
-                //  FIX:
-                //  the process can run in the background, thus we can't change the view
-                //  -> change the button status when re-create activity
-                isRunning = false;
-//                Button b = getActivity().findViewById(R.id.button_trigger_timer);
-//                b.setText("Start");
-
-                //  Stop the timer
-                timerHandler.removeCallbacks(timerRunnable);
-                timerView.setText(SecondsToTimeFormat(initSecs));
-                setStudyTimerBarStatus(true, initSecs - 10 * ONE_MINUTE);
-                //  Post this result to the database as a successful attempt
-                //  pmDate = current Date
-                //  pmTime = initSecs;
-                //  pmIsSuccessul = true
-                sViewModel.insert(new PomoRecord(true));
+                SetSuccessAttempt();
                 return;
             }
 
             //  Recurse the TimeRunnable object to keep the timer running
             timerHandler.postDelayed(this, 1000);
         }
+    }
+
+    private void SetSuccessAttempt() {
+        isRunning = false;
+        triggerTimerButton.setText("Start");
+        timerHandler.removeCallbacks(timerRunnable);
+        timerView.setText(SecondsToTimeFormat(initSecs));
+        setStudyTimerBarStatus(initSecs - 10 * ONE_MINUTE);
+        //  Post this result to the database as a successful attempt
+        //  pmDate = current Date
+        //  pmTime = initSecs;
+        //  pmIsSuccessul = true
+        sViewModel.insert(new PomoRecord(true));
+        return;
+    }
+
+    /**
+     * SecondsToTimeFormat
+     *
+     * Usage: Convert a number of seconds to string format (mm(minutes) : ss(seconds))
+     * @param convertedTime: an amount of seconds
+     * @return the String representation of the current timer's time
+     */
+    private String SecondsToTimeFormat(int convertedTime) {
+        String minutes = String.valueOf(convertedTime / 60);
+        String secs = String.valueOf(convertedTime % 60);
+
+        if (minutes.length() <= 1) minutes = "0" + minutes;
+        if (secs.length() <= 1) secs = "0" + secs;
+
+        String formattedTime = minutes + " : " + secs;
+
+        return formattedTime;
+    }
+
+    /**
+     * setStudyTimerBarStatus
+     *
+     * @param progress: the current progress
+     */
+    private void setStudyTimerBarStatus (float progress) {
+        studyTimerBar.setProgress(progress);
+        studyTimerBar.setEnabled(!isRunning);
     }
 
     /**
@@ -205,36 +254,5 @@ public class TimerScreenFragment extends Fragment {
             public void onStopTrackingTouch(CircularSeekBar CircularSeekBar) {
             }
         });
-    }
-
-    /**
-     * SecondsToTimeFormat
-     *
-     * Usage: Convert a number of seconds to string format (mm(minutes) : ss(seconds))
-     * @param convertedTime: an amount of seconds
-     * @return the String representation of the current timer's time
-     */
-    private String SecondsToTimeFormat(int convertedTime) {
-        String minutes = String.valueOf(convertedTime / 60);
-        String secs = String.valueOf(convertedTime % 60);
-
-        if (minutes.length() <= 1) minutes = "0" + minutes;
-        if (secs.length() <= 1) secs = "0" + secs;
-
-        String formattedTime = minutes + " : " + secs;
-
-        return formattedTime;
-    }
-
-    /**
-     * setStudyTimerBarStatus
-     *
-     * @param bool: activate/deactivate the progress bar
-     * @param progress: the current progress
-     */
-    private void setStudyTimerBarStatus (Boolean bool, float progress) {
-        studyTimerBar.setEnabled(bool);
-        studyTimerBar.setIndicatorEnabled(bool);
-        studyTimerBar.setProgress(progress);
     }
 }

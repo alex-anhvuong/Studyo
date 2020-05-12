@@ -32,7 +32,12 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setSelectedItemId(R.id.action_timer);
         bottomNav.setOnNavigationItemSelectedListener(new navItemListener());
 
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new TimerScreenFragment(), fragmentTags[1]).commit();
+        //  Check if an old fragment is already there
+        //  !! Android persists the Fragment layout and associated back stack when an Activity is restarted due to a configuration change !!
+        //  https://stackoverflow.com/questions/8474104/android-fragment-lifecycle-over-orientation-changes
+        if (fragmentManager.getFragments().size() == 0) {
+            fragmentManager.beginTransaction().replace(R.id.fragment_container, new TimerScreenFragment(), fragmentTags[1]).commit();
+        }
     }
 
     private class navItemListener implements BottomNavigationView.OnNavigationItemSelectedListener {

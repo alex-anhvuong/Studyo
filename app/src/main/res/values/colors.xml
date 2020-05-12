@@ -5,6 +5,6 @@
     <color name="colorAccent">#03DAC5</color>
     <integer-array name="customer_color_list">
         <item>@color/green_500</item>
-        <item>@color/green_500</item>
+        <item>@color/green_900</item>
     </integer-array>
 </resources>
