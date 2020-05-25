@@ -8,4 +8,9 @@
         <item>timer_tag</item>
         <item>statistic_tag</item>
     </string-array>
+
+    <string-array name="stat_option_titles">
+        <item>Pomodoro History</item>
+        <item>Assignments</item>
+    </string-array>
 </resources>

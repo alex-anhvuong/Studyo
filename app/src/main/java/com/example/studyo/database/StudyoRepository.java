@@ -1,4 +1,4 @@
-package com.example.studyo;
+package com.example.studyo.database;
 
 import android.app.Application;
 
@@ -10,17 +10,17 @@ public class StudyoRepository {
     private PomoDao pomoDao;
     private LiveData<List<PomoRecord>> pomoRecords;
 
-    StudyoRepository(Application application) {
+    public StudyoRepository(Application application) {
         StudyoDatabase db = StudyoDatabase.getDatabase(application);
         pomoDao = db.pomoDao();
         pomoRecords = pomoDao.getAllPomoRecords();
     }
 
-    LiveData<List<PomoRecord>> getPomoRecords() {
+    public LiveData<List<PomoRecord>> getPomoRecords() {
         return pomoRecords;
     }
 
-    void insert(final PomoRecord pomoRecord) {
+    public void insert(final PomoRecord pomoRecord) {
         StudyoDatabase.databaseWriteExecutor.execute(() -> {
             pomoDao.insert(pomoRecord);
         });

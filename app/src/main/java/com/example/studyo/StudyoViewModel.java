@@ -5,11 +5,13 @@ import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
+
+import com.example.studyo.database.PomoRecord;
+import com.example.studyo.database.StudyoRepository;
 
 import java.util.List;
 
-public class StudyoViewModel extends AndroidViewModel {
+public class  StudyoViewModel extends AndroidViewModel {
     private String TAG = this.getClass().getSimpleName();
     private StudyoRepository studyoRepository;
     private LiveData<List<PomoRecord>> pomoRecords;

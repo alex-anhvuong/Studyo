@@ -1,4 +1,4 @@
-package com.example.studyo;
+package com.example.studyo.database;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

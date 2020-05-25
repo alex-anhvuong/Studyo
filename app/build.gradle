@@ -23,6 +23,7 @@ android {
     compileOptions {
         targetCompatibility = 1.8
         sourceCompatibility = 1.8
+        android.defaultConfig.vectorDrawables.useSupportLibrary = true
     }
 
 }
@@ -36,8 +37,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
-
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.github.stefanodp91.android:circularseekbar:0.2'
+    implementation 'androidx.cardview:cardview:1.0.0'
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'androidx.appcompat:appcompat:1.0.2'

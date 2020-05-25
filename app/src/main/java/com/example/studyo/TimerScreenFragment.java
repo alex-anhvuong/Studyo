@@ -16,8 +16,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.studyo.database.PomoRecord;
 import com.github.stefanodp91.android.circularseekbar.CircularSeekBar;
 import com.github.stefanodp91.android.circularseekbar.OnCircularSeekBarChangeListener;
+
+import java.util.Date;
 
 
 /**
@@ -153,7 +156,7 @@ public class TimerScreenFragment extends Fragment {
                 //  pmDate = current Date
                 //  pmTime = initSecs - seconds;
                 //  pmIsSuccessul = false
-                sViewModel.insert(new PomoRecord(false));
+                sViewModel.insert(new PomoRecord(false, initSecs - seconds, new Date()));
             }
         }
     }
@@ -198,7 +201,7 @@ public class TimerScreenFragment extends Fragment {
         //  pmDate = current Date
         //  pmTime = initSecs;
         //  pmIsSuccessul = true
-        sViewModel.insert(new PomoRecord(true));
+        sViewModel.insert(new PomoRecord(true, initSecs, new Date()));
         return;
     }
 

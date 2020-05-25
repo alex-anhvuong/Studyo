@@ -1,16 +1,18 @@
-package com.example.studyo;
+package com.example.studyo.database;
 
 import android.content.Context;
 
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
 @Database(entities = {PomoRecord.class}, version = 1, exportSchema = false)
+@TypeConverters({Converters.class})
 public abstract class StudyoDatabase extends RoomDatabase {
     public abstract PomoDao pomoDao();
 
@@ -22,11 +24,13 @@ public abstract class StudyoDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (StudyoDatabase.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), StudyoDatabase.class, "statistic_database").build();
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), StudyoDatabase.class, "statistic_database")
+                            .fallbackToDestructiveMigration()
+                            .build();
                 }
             }
         }
-        databaseWriteExecutor.execute(() -> {INSTANCE.clearAllTables();});
+//        databaseWriteExecutor.execute(() -> {INSTANCE.clearAllTables();});
         return INSTANCE;
     }
 }
