@@ -16,7 +16,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:text="N"
-        app:layout_constraintStart_toEndOf="@+id/text_cal_month"
+        app:layout_constraintStart_toEndOf="@+id/text_cal_mon_year"
         app:layout_constraintTop_toTopOf="@+id/button_prev_month" />
 
     <Button
@@ -31,7 +31,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text_cal_month"
+        android:id="@+id/text_cal_mon_year"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

@@ -10,7 +10,6 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Update;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,7 +34,7 @@ public class PlannerScreenFragment extends Fragment {
     Button addAssignmentButton;
     RecyclerView calendarGridView;
     CalendarAdapter calendarAdapter;
-    TextView monthText;
+    TextView monAndYearText;
     Calendar calendar;
 
     public PlannerScreenFragment() {
@@ -54,7 +54,7 @@ public class PlannerScreenFragment extends Fragment {
 
         addAssignmentButton = view.findViewById(R.id.button_add_assignment);
         calendarGridView = view.findViewById(R.id.recyclerview_calendar_grid);
-        monthText = view.findViewById(R.id.text_cal_month);
+        monAndYearText = view.findViewById(R.id.text_cal_mon_year);
         Button prevButton = view.findViewById(R.id.button_prev_month);
         Button nextButton = view.findViewById(R.id.button_next_month);
         prevButton.setOnClickListener(new SwitchMonthOnClickListener());
@@ -107,8 +107,10 @@ public class PlannerScreenFragment extends Fragment {
             //  If the cell is not in the calendar's month, make is less visible
             if (cellCalendar.get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) holder.dateView.setTextColor(Color.parseColor("#E0E0E0"));
 
-            //  Highlight the cell of the current date, if we are in the current month
-            if ((cellCalendar.get(Calendar.MONTH) == Calendar.getInstance().get(Calendar.MONTH)) && (cellCalendar.get(Calendar.DATE) == Calendar.getInstance().get(Calendar.DATE))) {
+            //  Highlight the cell of the current date
+            if (cellCalendar.get(Calendar.DATE) == Calendar.getInstance().get(Calendar.DATE)
+                && cellCalendar.get(Calendar.MONTH) == Calendar.getInstance().get(Calendar.MONTH)
+                && cellCalendar.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)) {
                 holder.dateView.setTextColor(Color.WHITE);
                 holder.cardView.setBackgroundColor(Color.rgb(51, 153, 255));
             }
@@ -135,6 +137,7 @@ public class PlannerScreenFragment extends Fragment {
         //  Create array of Dates to be displayed
         ArrayList<Date> cells = new ArrayList<>();
         Calendar currentCalendar = (Calendar) calendar.clone();
+        int maxCellsCount = MAX_DATE_COUNT;
 
         //  Determine the DAY of the 1st date of the month (Sun, Mon, Tue, ..., Sar)
         //
@@ -143,10 +146,15 @@ public class PlannerScreenFragment extends Fragment {
 
         //  Determine the date of the first cell (Monday)
         //  If the 1st day is Monday, we remains at the cell since we already -2 above
+        if (monthBeginningCell == -1) {
+            monthBeginningCell = 6; //  if 1st date is on Sunday
+            maxCellsCount = 42;     //  42 cells for a month
+        }
         currentCalendar.add(Calendar.DAY_OF_MONTH, -monthBeginningCell);
 
         //  Start filling all the cells with next dates
-        while (cells.size() < MAX_DATE_COUNT) {
+
+        while (cells.size() < maxCellsCount) {
             cells.add(currentCalendar.getTime());
             currentCalendar.add(Calendar.DAY_OF_MONTH, 1);
         }
@@ -157,7 +165,7 @@ public class PlannerScreenFragment extends Fragment {
         calendarAdapter.notifyDataSetChanged();
 
         //  Set the text displaying current month
-        monthText.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, new Locale("en")));
+        monAndYearText.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, new Locale("en")) + " " + calendar.get(Calendar.YEAR));
     }
 
     private class SwitchMonthOnClickListener implements View.OnClickListener {
