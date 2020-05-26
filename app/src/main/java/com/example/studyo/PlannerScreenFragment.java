@@ -1,13 +1,18 @@
 package com.example.studyo;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Update;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +20,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 
 /**
@@ -22,8 +30,12 @@ import java.util.ArrayList;
  */
 public class PlannerScreenFragment extends Fragment {
 
+    public static final int MAX_DATE_COUNT = 35;
     Button addAssignmentButton;
     RecyclerView calendarGridView;
+    CalendarAdapter calendarAdapter;
+    TextView monthText;
+    Calendar calendar;
 
     public PlannerScreenFragment() {
         // Required empty public constructor
@@ -42,6 +54,11 @@ public class PlannerScreenFragment extends Fragment {
 
         addAssignmentButton = view.findViewById(R.id.button_add_assignment);
         calendarGridView = view.findViewById(R.id.recyclerview_calendar_grid);
+        monthText = view.findViewById(R.id.text_cal_month);
+        Button prevButton = view.findViewById(R.id.button_prev_month);
+        Button nextButton = view.findViewById(R.id.button_next_month);
+        prevButton.setOnClickListener(new SwitchMonthOnClickListener());
+        nextButton.setOnClickListener(new SwitchMonthOnClickListener());
 
         addAssignmentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,15 +70,21 @@ public class PlannerScreenFragment extends Fragment {
         });
 
         calendarGridView.setLayoutManager(new GridLayoutManager(getContext(), 7));
-        ArrayList dates = new ArrayList<Integer>();
-        for (int i = 0; i < 31; i++) dates.add(i+1);
-        calendarGridView.setAdapter(new CalendarAdapter(dates));
+        calendarAdapter = new CalendarAdapter(new ArrayList<>());
+        calendarGridView.setAdapter(calendarAdapter);
+
+        calendar = Calendar.getInstance();
+        UpdateCalendar();
     }
 
     class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarViewHolder> {
-        ArrayList dates = new ArrayList<Integer>();
+        ArrayList<Date> dates = new ArrayList<>();
 
-        public CalendarAdapter(ArrayList<Integer> dates) { this.dates = dates; }
+        public CalendarAdapter(ArrayList<Date> dates) { this.dates = dates; }
+
+        public void setDates(ArrayList<Date> dates) {
+            this.dates = dates;
+        }
 
         @NonNull
         @Override
@@ -72,9 +95,23 @@ public class PlannerScreenFragment extends Fragment {
             return viewHolder;
         }
 
+        @SuppressLint("ResourceAsColor")
         @Override
         public void onBindViewHolder(@NonNull CalendarAdapter.CalendarViewHolder holder, int position) {
-            holder.dateView.setText(dates.get(position).toString());
+            Calendar cellCalendar = Calendar.getInstance();
+            Date date = dates.get(position);
+            cellCalendar.setTime(date);
+            holder.dateView.setText(cellCalendar.get(Calendar.DATE) + "");
+            holder.dateView.setTextColor(Color.BLACK);
+
+            //  If the cell is not in the calendar's month, make is less visible
+            if (cellCalendar.get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) holder.dateView.setTextColor(Color.parseColor("#E0E0E0"));
+
+            //  Highlight the cell of the current date, if we are in the current month
+            if ((cellCalendar.get(Calendar.MONTH) == Calendar.getInstance().get(Calendar.MONTH)) && (cellCalendar.get(Calendar.DATE) == Calendar.getInstance().get(Calendar.DATE))) {
+                holder.dateView.setTextColor(Color.WHITE);
+                holder.cardView.setBackgroundColor(Color.rgb(51, 153, 255));
+            }
         }
 
         @Override
@@ -83,11 +120,61 @@ public class PlannerScreenFragment extends Fragment {
         }
 
         private class CalendarViewHolder extends RecyclerView.ViewHolder {
+            CardView cardView;
             TextView dateView;
 
             public CalendarViewHolder(@NonNull View itemView) {
                 super(itemView);
+                cardView = itemView.findViewById(R.id.card_date_cell);
                 dateView = itemView.findViewById(R.id.text_cell_date);
+            }
+        }
+    }
+
+    private void UpdateCalendar() {
+        //  Create array of Dates to be displayed
+        ArrayList<Date> cells = new ArrayList<>();
+        Calendar currentCalendar = (Calendar) calendar.clone();
+
+        //  Determine the DAY of the 1st date of the month (Sun, Mon, Tue, ..., Sar)
+        //
+        currentCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        int monthBeginningCell = currentCalendar.get(Calendar.DAY_OF_WEEK) - 2;    //  Calendar.get() will return 2 for MONDAY
+
+        //  Determine the date of the first cell (Monday)
+        //  If the 1st day is Monday, we remains at the cell since we already -2 above
+        currentCalendar.add(Calendar.DAY_OF_MONTH, -monthBeginningCell);
+
+        //  Start filling all the cells with next dates
+        while (cells.size() < MAX_DATE_COUNT) {
+            cells.add(currentCalendar.getTime());
+            currentCalendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        Log.i("DEBUG", "Check calendar value " + calendar.get(Calendar.DATE) + " " + calendar.get(Calendar.MONTH));
+        //  Update the Adapter
+        calendarAdapter.setDates(cells);
+        calendarAdapter.notifyDataSetChanged();
+
+        //  Set the text displaying current month
+        monthText.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, new Locale("en")));
+    }
+
+    private class SwitchMonthOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            String navigation = ((Button)v).getText().toString();
+            switch (navigation) {
+                case "N":
+                    calendar.add(Calendar.MONTH, 1);
+                    Log.i("DEBUG", "Call to next calendar " + calendar.get(Calendar.DATE) + " " + calendar.get(Calendar.MONTH));
+                    UpdateCalendar();
+                    break;
+                default:
+                    calendar.add(Calendar.MONTH, -1);
+                    UpdateCalendar();
+                    break;
             }
         }
     }
