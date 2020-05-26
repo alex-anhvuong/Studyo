@@ -94,11 +94,13 @@ public class PomoHistoryFragment extends Fragment {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
             holder.pmDate.setText(formatter.format(pomoItem.getPmDate()));
             if (pomoItem.getPmIsSuccessful()) {
-                holder.pmDescription.setText("Successfully studied for a duration of " +  pomoItem.getPmSeconds()/60 + " minutes.");
+//                holder.pmDescription.setText("Successfully studied for a duration of " +  pomoItem.getPmSeconds()/60 + " minutes.");
+                holder.pmDescription.setText("Successfully studied for a duration of " +  pomoItem.getPmSeconds() + " seconds.");
                 holder.pmIsSuccessful.setImageResource(R.drawable.ic_tick);
             }
             else {
-                holder.pmDescription.setText("You missed a pomodoro. You were focus for " + pomoItem.getPmSeconds()/60 + " minutes though, well done!");
+//                holder.pmDescription.setText("You missed a pomodoro. You were focus for " + pomoItem.getPmSeconds()/60 + " minutes though, well done!");
+                holder.pmDescription.setText("You missed a pomodoro. You were focus for " + pomoItem.getPmSeconds() + " seconds though, well done!");
                 holder.pmIsSuccessful.setImageResource(R.drawable.ic_fail);
             }
         }

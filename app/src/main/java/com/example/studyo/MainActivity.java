@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
 
             switch (menuItem.getItemId()) {
                 case R.id.action_planner:
-                    selectedFragment = new TimerScreenFragment();
-                    nextFragmentTag = fragmentTags[1];
+                    selectedFragment = new PlannerScreenFragment();
+                    nextFragmentTag = fragmentTags[0];
                     break;
                 case R.id.action_stats:
                     selectedFragment = new StatisticScreenFragment();
