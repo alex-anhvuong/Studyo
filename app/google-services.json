@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "676742624587",
+    "firebase_url": "https://studyo-5320e.firebaseio.com",
+    "project_id": "studyo-5320e",
+    "storage_bucket": "studyo-5320e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:676742624587:android:ed3c866eff2ae48eb524ce",
+        "android_client_info": {
+          "package_name": "com.example.studyo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "676742624587-n1q9e67dll8tkkhdb3p6s7sns4j6pg64.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.studyo",
+            "certificate_hash": "5f017a22ea3297a470dec7918ef67802cad976fb"
+          }
+        },
+        {
+          "client_id": "676742624587-csgaid3otdvf2sn3c688dm7aih9bc7be.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBk0IdUPSLFb-8hFsjSvzfo7znY8cWh0p8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "676742624587-csgaid3otdvf2sn3c688dm7aih9bc7be.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

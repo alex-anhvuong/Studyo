@@ -18,8 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.studyo.database.PomoRecord;
+import com.example.studyo.viewmodels.PomoViewModel;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class PomoHistoryFragment extends Fragment {
     String TAG = this.getClass().getSimpleName();
     private RecyclerView itemsRecyclerView;
     private PmHistoryAdapter itemsAdapter;
-    private StudyoViewModel sViewModel;
+    private PomoViewModel sViewModel;
     private List<PomoRecord> pomoHistory = new ArrayList<PomoRecord>();
 
     public PomoHistoryFragment() {
@@ -57,7 +57,7 @@ public class PomoHistoryFragment extends Fragment {
         itemsRecyclerView.setAdapter(itemsAdapter);
 
         ViewModelProvider.AndroidViewModelFactory avmFactory = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication());
-        sViewModel =  new ViewModelProvider(requireActivity(), avmFactory).get(StudyoViewModel.class);
+        sViewModel =  new ViewModelProvider(requireActivity(), avmFactory).get(PomoViewModel.class);
         sViewModel.getPomoRecords().observe(getViewLifecycleOwner(), new Observer<List<PomoRecord>>() {
             @Override
             public void onChanged(List<PomoRecord> pomoRecords) {

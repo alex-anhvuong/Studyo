@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.studyo.database.PomoRecord;
+import com.example.studyo.viewmodels.PomoViewModel;
 import com.github.stefanodp91.android.circularseekbar.CircularSeekBar;
 import com.github.stefanodp91.android.circularseekbar.OnCircularSeekBarChangeListener;
 
@@ -49,7 +50,7 @@ public class TimerScreenFragment extends Fragment {
     private CircularSeekBar studyTimerBar;  //  the progress bar representation of the timer
     private Button triggerTimerButton;
     //  Architecture Components
-    private StudyoViewModel sViewModel;
+    private PomoViewModel sViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,7 +85,7 @@ public class TimerScreenFragment extends Fragment {
         setSeekBarListener();
         //  Create a ViewModel to insert data into database
         ViewModelProvider.AndroidViewModelFactory avmFactory = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication());
-        sViewModel = new ViewModelProvider(requireActivity(), avmFactory).get(StudyoViewModel.class);
+        sViewModel = new ViewModelProvider(requireActivity(), avmFactory).get(PomoViewModel.class);
 
         //  Initiate timer view
         if (!isRunning) {
