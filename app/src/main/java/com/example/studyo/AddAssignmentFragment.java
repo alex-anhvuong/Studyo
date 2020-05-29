@@ -52,12 +52,11 @@ public class AddAssignmentFragment extends Fragment {
         asmViewModel = new AssignmentViewModel();
 
         calendar = Calendar.getInstance();
-        textSetDate.setText(calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.MONTH) + "/" + calendar.get(Calendar.YEAR));
+        textSetDate.setText(calendar.get(Calendar.DATE) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR));
 
         textSetDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calendar = Calendar.getInstance();
                 DatePickerDialog dialog = new DatePickerDialog(getContext(), 0, new DueDateOnDateSetListener(), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
                 dialog.show();
             }
@@ -73,9 +72,13 @@ public class AddAssignmentFragment extends Fragment {
                 Toast.makeText(getContext(), "Please let me know the Assignment Title, or the Unit Name!", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            if (calendar.compareTo(Calendar.getInstance()) < 0) {
+                Toast.makeText(getContext(), "Please choose a date later than today!", Toast.LENGTH_SHORT).show();
+                return;
+            }
             
             AssignmentRecord newRecord = new AssignmentRecord();
-            newRecord.setaID(1);
             newRecord.setaName(textSetAsmTitle.getText().toString());
             newRecord.setaUnit(textSetUnitName.getText().toString());
             newRecord.setaDate(calendar.getTime());
@@ -87,8 +90,8 @@ public class AddAssignmentFragment extends Fragment {
     private class DueDateOnDateSetListener implements DatePickerDialog.OnDateSetListener {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-            textSetDate.setText(dayOfMonth + "/" + month + "/" + year);
-            calendar.set(year + 1900, month, dayOfMonth);
+            textSetDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+            calendar.set(year, month, dayOfMonth);
         }
     }
 }

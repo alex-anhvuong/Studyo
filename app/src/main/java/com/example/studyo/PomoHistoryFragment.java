@@ -33,7 +33,6 @@ public class PomoHistoryFragment extends Fragment {
     private RecyclerView itemsRecyclerView;
     private PmHistoryAdapter itemsAdapter;
     private PomoViewModel sViewModel;
-    private List<PomoRecord> pomoHistory = new ArrayList<PomoRecord>();
 
     public PomoHistoryFragment() {
         // Required empty public constructor
@@ -63,7 +62,6 @@ public class PomoHistoryFragment extends Fragment {
             public void onChanged(List<PomoRecord> pomoRecords) {
                 itemsAdapter.setPomoHistory(pomoRecords);
                 itemsAdapter.notifyDataSetChanged();
-                Log.i(TAG, String.valueOf(pomoHistory.size()));
             }
         });
     }

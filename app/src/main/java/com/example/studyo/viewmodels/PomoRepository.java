@@ -17,15 +17,14 @@ public class PomoRepository {
     private PomoDao pomoDao;
     private LiveData<List<PomoRecord>> pomoRecords;
 
+    public LiveData<List<PomoRecord>> getPomoRecords() { return pomoRecords; }
+
     public PomoRepository(Application application) {
         StudyoDatabase db = StudyoDatabase.getDatabase(application);
         pomoDao = db.pomoDao();
         pomoRecords = pomoDao.getAllPomoRecords();
     }
 
-    public LiveData<List<PomoRecord>> getPomoRecords() {
-        return pomoRecords;
-    }
 
     public void insert(final PomoRecord pomoRecord) {
         StudyoDatabase.databaseWriteExecutor.execute(() -> {

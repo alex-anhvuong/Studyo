@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,6 +21,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.studyo.database.AssignmentRecord;
+import com.example.studyo.viewmodels.AssignmentViewModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.FirebaseDatabase;
@@ -26,7 +29,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 /**
@@ -40,6 +45,8 @@ public class PlannerScreenFragment extends Fragment {
     CalendarAdapter calendarAdapter;
     TextView monAndYearText;
     Calendar calendar;
+    AssignmentViewModel asmViewModel;
+    private ArrayList<Date> asmDates = new ArrayList<>();
 
     public PlannerScreenFragment() {
         // Required empty public constructor
@@ -69,6 +76,7 @@ public class PlannerScreenFragment extends Fragment {
             public void onClick(View v) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new AddAssignmentFragment())
+                        .addToBackStack(null)
                         .commit();
             }
         });
@@ -79,6 +87,15 @@ public class PlannerScreenFragment extends Fragment {
 
         calendar = Calendar.getInstance();
         UpdateCalendar();
+
+        asmViewModel = new AssignmentViewModel();
+        asmViewModel.getAssignmentDates("/dates/");
+        asmViewModel.getAsmDates().observe(getViewLifecycleOwner(), new Observer<Map<String, Date>>() {
+            @Override
+            public void onChanged(Map<String, Date> stringDateMap) {
+                asmDates = new ArrayList<>(stringDateMap.values());
+            }
+        });
     }
 
     class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarViewHolder> {
@@ -103,8 +120,7 @@ public class PlannerScreenFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull CalendarAdapter.CalendarViewHolder holder, int position) {
             Calendar cellCalendar = Calendar.getInstance();
-            Date date = dates.get(position);
-            cellCalendar.setTime(date);
+            cellCalendar.setTime(dates.get(position));
             holder.dateView.setText(cellCalendar.get(Calendar.DATE) + "");
             holder.dateView.setTextColor(Color.BLACK);
 
@@ -118,6 +134,19 @@ public class PlannerScreenFragment extends Fragment {
                 holder.dateView.setTextColor(Color.WHITE);
                 holder.cardView.setBackgroundColor(Color.rgb(51, 153, 255));
             }
+
+            int asmCount = 0;
+            for (int i = 0; i < asmDates.size(); i++) {
+                Calendar asmCalendar = Calendar.getInstance();
+                asmCalendar.setTime(asmDates.get(i));
+                if (cellCalendar.get(Calendar.DATE) == asmCalendar.get(Calendar.DATE)
+                        && cellCalendar.get(Calendar.MONTH) == asmCalendar.get(Calendar.MONTH)
+                        && cellCalendar.get(Calendar.YEAR) == asmCalendar.get(Calendar.YEAR)) {
+                    asmCount++;
+                }
+            }
+
+            SetViewBackgroundColor(asmCount, holder.cardView);
         }
 
         @Override
@@ -188,6 +217,23 @@ public class PlannerScreenFragment extends Fragment {
                     UpdateCalendar();
                     break;
             }
+        }
+    }
+
+    private void SetViewBackgroundColor(int asmCount, CardView view) {
+        switch (asmCount) {
+            case 2:
+                view.setBackgroundColor(Color.rgb(174, 213, 129));
+                break;
+            case 3:
+                view.setBackgroundColor(Color.rgb(76, 175, 80));
+                break;
+            case 4:
+                view.setBackgroundColor(Color.rgb(27, 94, 32));
+                break;
+            default:
+                view.setBackgroundColor(Color.rgb(220, 237, 200));
+                break;
         }
     }
 }

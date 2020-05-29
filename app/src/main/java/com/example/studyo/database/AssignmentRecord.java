@@ -4,13 +4,13 @@ import java.util.Date;
 
 public class AssignmentRecord {
 
-    private int aID;
+    private String aID;
     private String aName;
     private String aUnit;
     private Date aDate;
     private Boolean isOnTime;
 
-    public AssignmentRecord(int aID, String aName, String aUnit, Date aDate, Boolean isOnTime) {
+    public AssignmentRecord(String aID, String aName, String aUnit, Date aDate, Boolean isOnTime) {
         this.aID = aID;
         this.aName = aName;
         this.aUnit = aUnit;
@@ -22,11 +22,11 @@ public class AssignmentRecord {
 
     }
 
-    public int getaID() {
+    public String getaID() {
         return aID;
     }
 
-    public void setaID(int aID) {
+    public void setaID(String aID) {
         this.aID = aID;
     }
 
