@@ -89,11 +89,14 @@ public class PlannerScreenFragment extends Fragment {
         UpdateCalendar();
 
         asmViewModel = new AssignmentViewModel();
-        asmViewModel.getAssignmentDates("/dates/");
         asmViewModel.getAsmDates().observe(getViewLifecycleOwner(), new Observer<Map<String, Date>>() {
             @Override
             public void onChanged(Map<String, Date> stringDateMap) {
-                asmDates = new ArrayList<>(stringDateMap.values());
+                if (stringDateMap != null) {
+                    asmDates = new ArrayList<>(stringDateMap.values());
+                    Log.i("DEBUG", asmDates.toString());
+                    calendarAdapter.notifyDataSetChanged();
+                }
             }
         });
     }
@@ -102,6 +105,10 @@ public class PlannerScreenFragment extends Fragment {
         ArrayList<Date> dates = new ArrayList<>();
 
         public CalendarAdapter(ArrayList<Date> dates) { this.dates = dates; }
+
+        public void clearDates() {
+            dates.clear();
+        }
 
         public void setDates(ArrayList<Date> dates) {
             this.dates = dates;
@@ -119,6 +126,7 @@ public class PlannerScreenFragment extends Fragment {
         @SuppressLint("ResourceAsColor")
         @Override
         public void onBindViewHolder(@NonNull CalendarAdapter.CalendarViewHolder holder, int position) {
+            Log.i("DEBUG", "Updating the view holder");
             Calendar cellCalendar = Calendar.getInstance();
             cellCalendar.setTime(dates.get(position));
             holder.dateView.setText(cellCalendar.get(Calendar.DATE) + "");
@@ -192,10 +200,12 @@ public class PlannerScreenFragment extends Fragment {
             currentCalendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
-        Log.i("DEBUG", "Check calendar value " + calendar.get(Calendar.DATE) + " " + calendar.get(Calendar.MONTH));
         //  Update the Adapter
+        int currentSize = calendarAdapter.getItemCount();
+        calendarAdapter.clearDates();
         calendarAdapter.setDates(cells);
-        calendarAdapter.notifyDataSetChanged();
+        calendarAdapter.notifyItemRangeRemoved(0, currentSize);
+        calendarAdapter.notifyItemRangeInserted(0, cells.size());
 
         //  Set the text displaying current month
         monAndYearText.setText(calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, new Locale("en")) + " " + calendar.get(Calendar.YEAR));
@@ -209,7 +219,6 @@ public class PlannerScreenFragment extends Fragment {
             switch (navigation) {
                 case "N":
                     calendar.add(Calendar.MONTH, 1);
-                    Log.i("DEBUG", "Call to next calendar " + calendar.get(Calendar.DATE) + " " + calendar.get(Calendar.MONTH));
                     UpdateCalendar();
                     break;
                 default:
@@ -222,17 +231,14 @@ public class PlannerScreenFragment extends Fragment {
 
     private void SetViewBackgroundColor(int asmCount, CardView view) {
         switch (asmCount) {
-            case 2:
+            case 1:
                 view.setBackgroundColor(Color.rgb(174, 213, 129));
                 break;
-            case 3:
+            case 2:
                 view.setBackgroundColor(Color.rgb(76, 175, 80));
                 break;
-            case 4:
+            case 3:
                 view.setBackgroundColor(Color.rgb(27, 94, 32));
-                break;
-            default:
-                view.setBackgroundColor(Color.rgb(220, 237, 200));
                 break;
         }
     }

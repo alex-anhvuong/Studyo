@@ -24,35 +24,31 @@ import java.util.Map;
 public class AssignmentRepository {
 
     private DatabaseReference onlineDB;
-    private LiveData<Map<String, Date>> idToDatesMap = new MutableLiveData<Map<String,Date>>();
+    private MutableLiveData<Map<String, Date>> idToDatesMap = new MutableLiveData<>();
 
-    public LiveData<Map<String, Date>> getIdToDatesMap() {
+    public MutableLiveData<Map<String, Date>> getIdToDatesMap() {
+        if (idToDatesMap.getValue() == null) {
+            onlineDB.child("/dates/").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    GenericTypeIndicator<Map<String, Date>> dataType = new GenericTypeIndicator<Map<String, Date>>() {};
+                    idToDatesMap.postValue(dataSnapshot.getValue(dataType));
+//                    Log.i("DEBUG", dataSnapshot.getValue(dataType).values().toString());
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
         return idToDatesMap;
     }
 
 
     public AssignmentRepository() {
         onlineDB = FirebaseDatabase.getInstance().getReference("assignment_records");
-    }
-
-    public DatabaseReference getOnlineDB() {
-        return onlineDB;
-    }
-
-    public void getDates(String path) {
-        DatabaseReference newRef = onlineDB.child(path);
-        newRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                GenericTypeIndicator<MutableLiveData<Map<String, Date>>> dataType = new GenericTypeIndicator<MutableLiveData<Map<String, Date>>>() {};
-                idToDatesMap = dataSnapshot.getValue(dataType);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
     public void insert (final AssignmentRecord asmRecord) {
