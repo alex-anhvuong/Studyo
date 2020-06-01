@@ -99,7 +99,7 @@ public class PlannerScreenFragment extends Fragment {
                 if (stringDateMap != null) {
                     asmDates = new ArrayList<>(stringDateMap.values());
                     Log.i("DEBUG", asmDates.toString());
-                    calendarAdapter.notifyDataSetChanged();
+                    calendarAdapter.notifyItemRangeChanged(0, calendarAdapter.getItemCount());
                 }
             }
         });
@@ -124,7 +124,7 @@ public class PlannerScreenFragment extends Fragment {
         }
 
         public void setDates(ArrayList<Date> dates) {
-            this.dates = dates;
+            this.dates.addAll(dates);
         }
 
         @NonNull
@@ -143,6 +143,7 @@ public class PlannerScreenFragment extends Fragment {
             cellCalendar.setTime(dates.get(position));
             holder.dateView.setText(cellCalendar.get(Calendar.DATE) + "");
             holder.dateView.setTextColor(Color.BLACK);
+            holder.cardView.setBackgroundColor(Color.WHITE);
 
             //  If the cell is not in the calendar's month, make is less visible
             if (cellCalendar.get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) holder.dateView.setTextColor(Color.parseColor("#E0E0E0"));
@@ -151,7 +152,6 @@ public class PlannerScreenFragment extends Fragment {
             if (cellCalendar.get(Calendar.DATE) == Calendar.getInstance().get(Calendar.DATE)
                 && cellCalendar.get(Calendar.MONTH) == Calendar.getInstance().get(Calendar.MONTH)
                 && cellCalendar.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)) {
-                holder.dateView.setTextColor(Color.WHITE);
                 holder.cardView.setBackgroundColor(Color.rgb(51, 153, 255));
                 return;
             }
