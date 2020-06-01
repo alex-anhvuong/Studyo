@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -41,7 +42,7 @@ public class PlannerScreenFragment extends Fragment {
 
     public static final int MAX_DATE_COUNT = 35;
     Button addAssignmentButton;
-    RecyclerView calendarGridView;
+    RecyclerView calendarGridView, todayAsmListView;
     CalendarAdapter calendarAdapter;
     TextView monAndYearText;
     Calendar calendar;
@@ -65,6 +66,7 @@ public class PlannerScreenFragment extends Fragment {
 
         addAssignmentButton = view.findViewById(R.id.button_add_assignment);
         calendarGridView = view.findViewById(R.id.recyclerview_calendar_grid);
+        todayAsmListView = view.findViewById(R.id.recyclerview_today_asm);
         monAndYearText = view.findViewById(R.id.text_cal_mon_year);
         Button prevButton = view.findViewById(R.id.button_prev_month);
         Button nextButton = view.findViewById(R.id.button_next_month);
@@ -88,6 +90,8 @@ public class PlannerScreenFragment extends Fragment {
         calendar = Calendar.getInstance();
         UpdateCalendar();
 
+        todayAsmListView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         asmViewModel = new AssignmentViewModel();
         asmViewModel.getAsmDates().observe(getViewLifecycleOwner(), new Observer<Map<String, Date>>() {
             @Override
@@ -99,10 +103,19 @@ public class PlannerScreenFragment extends Fragment {
                 }
             }
         });
+
+        asmViewModel.getTodayAsmList().observe(getViewLifecycleOwner(), new Observer<List<List<String>>>() {
+            @Override
+            public void onChanged(List<List<String>> lists) {
+                Log.i("DEBUG", lists.toString());
+                todayAsmListView.setAdapter(new TodayAsmAdapter(lists));
+                asmViewModel.getTodayAsmList().removeObservers(getViewLifecycleOwner());
+            }
+        });
     }
 
     class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarViewHolder> {
-        ArrayList<Date> dates = new ArrayList<>();
+        ArrayList<Date> dates;
 
         public CalendarAdapter(ArrayList<Date> dates) { this.dates = dates; }
 
@@ -126,7 +139,6 @@ public class PlannerScreenFragment extends Fragment {
         @SuppressLint("ResourceAsColor")
         @Override
         public void onBindViewHolder(@NonNull CalendarAdapter.CalendarViewHolder holder, int position) {
-            Log.i("DEBUG", "Updating the view holder");
             Calendar cellCalendar = Calendar.getInstance();
             cellCalendar.setTime(dates.get(position));
             holder.dateView.setText(cellCalendar.get(Calendar.DATE) + "");
@@ -141,6 +153,7 @@ public class PlannerScreenFragment extends Fragment {
                 && cellCalendar.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)) {
                 holder.dateView.setTextColor(Color.WHITE);
                 holder.cardView.setBackgroundColor(Color.rgb(51, 153, 255));
+                return;
             }
 
             int asmCount = 0;
@@ -170,6 +183,43 @@ public class PlannerScreenFragment extends Fragment {
                 super(itemView);
                 cardView = itemView.findViewById(R.id.card_date_cell);
                 dateView = itemView.findViewById(R.id.text_cell_date);
+            }
+        }
+    }
+
+    class TodayAsmAdapter extends RecyclerView.Adapter<TodayAsmAdapter.TodayAsmViewHolder> {
+        List<List<String>> todayAsmList;
+
+        public TodayAsmAdapter (List<List<String>> todayAsms) {
+            this.todayAsmList = todayAsms;
+        }
+
+        @NonNull
+        @Override
+        public TodayAsmViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View todayAsmCard = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_today_asm, parent, false);
+            TodayAsmViewHolder todayAsmViewHolder = new TodayAsmViewHolder(todayAsmCard);
+            return todayAsmViewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull TodayAsmViewHolder holder, int position) {
+            holder.asmTitle.setText(todayAsmList.get(position).get(0));
+            holder.asmUnitName.setText(todayAsmList.get(position).get(1));
+        }
+
+        @Override
+        public int getItemCount() {
+            return todayAsmList.size();
+        }
+
+        private class TodayAsmViewHolder extends RecyclerView.ViewHolder {
+            TextView asmTitle, asmUnitName;
+
+            public TodayAsmViewHolder(@NonNull View itemView) {
+                super(itemView);
+                asmTitle = itemView.findViewById(R.id.text_asm_title);
+                asmUnitName = itemView.findViewById(R.id.text_unit_name);
             }
         }
     }
