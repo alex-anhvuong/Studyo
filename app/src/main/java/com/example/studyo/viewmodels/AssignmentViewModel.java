@@ -12,8 +12,10 @@ import java.util.Map;
 
 public class AssignmentViewModel extends ViewModel {
     private AssignmentRepository asmRepository;
-    private MutableLiveData<Map<String, Date>> asmDates;
-    private MutableLiveData<List<List<String>>> todayAsmList;
+    private LiveData<Map<String, Date>> asmDates;
+    private LiveData<List<List<String>>> todayAsmList;
+
+    private LiveData<Map<String, Object>> asmAllDetailsList;
 
     public AssignmentViewModel() {
         asmRepository = new AssignmentRepository();
@@ -27,7 +29,12 @@ public class AssignmentViewModel extends ViewModel {
         return asmRepository.getTodayAsmList();
     }
 
+    public LiveData<Map<String, Object>> getAsmAllDetailsList() {
+        return asmRepository.getAsmAllDetailsMap();
+    }
+
     public void insertAssignmentRecord(AssignmentRecord asmRecord) {
         asmRepository.insert(asmRecord);
     }
+
 }

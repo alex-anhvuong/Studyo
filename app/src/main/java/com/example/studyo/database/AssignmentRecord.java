@@ -1,33 +1,22 @@
 package com.example.studyo.database;
 
+import java.util.Comparator;
 import java.util.Date;
 
 public class AssignmentRecord {
 
-    private String aID;
     private String aName;
     private String aUnit;
     private Date aDate;
-    private Boolean isOnTime;
 
-    public AssignmentRecord(String aID, String aName, String aUnit, Date aDate, Boolean isOnTime) {
-        this.aID = aID;
+    public AssignmentRecord(String aName, String aUnit, Date aDate) {
         this.aName = aName;
         this.aUnit = aUnit;
         this.aDate = aDate;
-        this.isOnTime = isOnTime;
     }
 
     public AssignmentRecord() {
 
-    }
-
-    public String getaID() {
-        return aID;
-    }
-
-    public void setaID(String aID) {
-        this.aID = aID;
     }
 
     public String getaName() {
@@ -52,13 +41,5 @@ public class AssignmentRecord {
 
     public void setaDate(Date aDate) {
         this.aDate = aDate;
-    }
-
-    public Boolean getOnTime() {
-        return isOnTime;
-    }
-
-    public void setOnTime(Boolean onTime) {
-        isOnTime = onTime;
     }
 }

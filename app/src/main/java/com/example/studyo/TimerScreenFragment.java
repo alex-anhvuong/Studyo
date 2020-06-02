@@ -38,7 +38,7 @@ public class TimerScreenFragment extends Fragment {
     /**
      *  Properties of the fragment
      */
-    private int ONE_MINUTE = 1;
+    private int ONE_MINUTE = 60;
     private Boolean isRunning = false;  //  The state of the timer (is running / paused)
     private int initSecs = 10 * ONE_MINUTE;   //    The time user will start count down from
     private Long endTime = Long.valueOf(0); //  Time stamp: endTime = initSecs + (the timestamp when user play the timer)

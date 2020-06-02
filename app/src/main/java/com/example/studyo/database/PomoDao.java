@@ -17,6 +17,6 @@ public interface PomoDao {
     @Query("DELETE FROM pomo_record_table")
     void deleteAll();
 
-    @Query("SELECT * FROM pomo_record_table")
+    @Query("SELECT * FROM pomo_record_table ORDER BY ID DESC")
     LiveData<List<PomoRecord>> getAllPomoRecords();
 }

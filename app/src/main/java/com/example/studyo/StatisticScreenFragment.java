@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,14 +88,16 @@ public class StatisticScreenFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     TextView optionName = v.findViewById(R.id.text_stat_option_name);
-                    switch (optionName.getText().toString()) {
-                        case "Pomodoro History":
-                            getActivity().getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.fragment_container, new PomoHistoryFragment())
-                                    .commit();
-                            break;
-                        default:
-                            break;
+                    if (optionName.getText().toString().equals("Pomodoro History")) {
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new PomoHistoryFragment())
+                                .addToBackStack(null)
+                                .commit();
+                    } else if (optionName.getText().toString().equals("Assignments")) {
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new AssignmentRecordFragment())
+                                .addToBackStack(null)
+                                .commit();
                     }
                 }
             });

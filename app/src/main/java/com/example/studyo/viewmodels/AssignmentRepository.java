@@ -28,6 +28,7 @@ public class AssignmentRepository {
     private DatabaseReference onlineDB;
     private MutableLiveData<Map<String, Date>> idToDatesMap = new MutableLiveData<>();
     private MutableLiveData<List<List<String>>> todayAsmList = new MutableLiveData<>();
+    private MutableLiveData<Map<String, Object>> asmAllDetailsMap = new MutableLiveData<>();
     private Map<String, Date> idDatesMapOneTime = new HashMap<>();
     private Map<String, List<String>> idAsmDetailsMap = new HashMap<>();
 
@@ -91,7 +92,6 @@ public class AssignmentRepository {
                                 List<String> details = idAsmDetailsMap.get(key);
                                 details.add(dataSnapshot.getValue(String.class));
                                 idAsmDetailsMap.put(key, details);
-//                                Log.i("DEBUG", details.toString());
                                 todayAsmList.postValue(new ArrayList<>(idAsmDetailsMap.values()));
                             }
 
@@ -110,10 +110,25 @@ public class AssignmentRepository {
             }
         });
 
-        //  Get the assignment's title
-
-
         return todayAsmList;
+    }
+
+    public LiveData<Map<String, Object>> getAsmAllDetailsMap() {
+
+        //  Get all the details of assignment's dates, title and unit name
+        onlineDB.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                GenericTypeIndicator<Map<String, Object>> dataType = new GenericTypeIndicator<Map<String, Object>>() {};
+                asmAllDetailsMap.postValue(dataSnapshot.getValue(dataType));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return asmAllDetailsMap;
     }
 
     public AssignmentRepository() {

@@ -82,7 +82,6 @@ public class AddAssignmentFragment extends Fragment {
             newRecord.setaName(textSetAsmTitle.getText().toString());
             newRecord.setaUnit(textSetUnitName.getText().toString());
             newRecord.setaDate(calendar.getTime());
-            newRecord.setOnTime(true);
             asmViewModel.insertAssignmentRecord(newRecord);
         }
     }

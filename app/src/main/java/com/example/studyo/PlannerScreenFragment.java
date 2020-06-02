@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,11 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.studyo.database.AssignmentRecord;
 import com.example.studyo.viewmodels.AssignmentViewModel;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -218,7 +213,7 @@ public class PlannerScreenFragment extends Fragment {
 
             public TodayAsmViewHolder(@NonNull View itemView) {
                 super(itemView);
-                asmTitle = itemView.findViewById(R.id.text_asm_title);
+                asmTitle = itemView.findViewById(R.id.text_asm_title2);
                 asmUnitName = itemView.findViewById(R.id.text_unit_name);
             }
         }
