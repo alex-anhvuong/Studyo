@@ -49,28 +49,13 @@ public class StatisticScreenFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //  This fragment display a list showing two options
+        //  One is navigating to Pomodoro history
+        //  The other is navigating to assignment records
         optionsRecyclerView = view.findViewById(R.id.recyclerview_stat_options);
         optionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         optionsAdapter = new OptionsAdapter(getResources().getStringArray(R.array.stat_option_titles));
         optionsRecyclerView.setAdapter(optionsAdapter);
-
-//        ViewModelProvider.AndroidViewModelFactory avmFactory = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication());
-//        sViewModel =  new ViewModelProvider(requireActivity(), avmFactory).get(StudyoViewModel.class);
-//
-//        sViewModel.getPomoRecords().observe(getViewLifecycleOwner(), new Observer<List<PomoRecord>>() {
-//            @Override
-//            public void onChanged(List<PomoRecord> pomoRecords) {
-//                TextView showDataView = view.findViewById(R.id.text_display_database);
-//                Log.i(TAG, String.valueOf(pomoRecords.size()));
-//                String data = "";
-//                if (pomoRecords.size() != 0) {
-//                    for (PomoRecord pRecords: pomoRecords) {
-//                        data += pRecords.getPmID() + "&" +pRecords.getPmIsSuccessful().toString() + "&" + pRecords.getPmSeconds() + "&" + pRecords.getPmDate() + "/";
-//                    }
-//                }
-//                showDataView.setText(data);
-//            }
-//        });
     }
 
     class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.OptionsViewHolder> {

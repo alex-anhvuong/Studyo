@@ -90,6 +90,7 @@ public class TimerScreenFragment extends Fragment {
         //  Initiate timer view
         if (!isRunning) {
             timerView.setText(SecondsToTimeFormat(initSecs));
+            setStudyTimerBarStatus(initSecs/ONE_MINUTE - 10);
         }
         else {
             //  endTime - current TimeStamp = the time we have left
@@ -101,7 +102,7 @@ public class TimerScreenFragment extends Fragment {
                 //  Continue the timer from timeLeft
                 seconds = timeLeft;
                 timerView.setText(SecondsToTimeFormat(seconds));
-                    setStudyTimerBarStatus(100 /(float)initSecs * (float)seconds);
+                setStudyTimerBarStatus(100 /(float)initSecs * (float)seconds);
                 timerHandler.post(timerRunnable);
                 triggerTimerButton.setText("Stop");
             }

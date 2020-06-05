@@ -32,6 +32,11 @@ public class AssignmentRepository {
     private Map<String, Date> idDatesMapOneTime = new HashMap<>();
     private Map<String, List<String>> idAsmDetailsMap = new HashMap<>();
 
+    /**
+     * getIDToDatesMap()
+     * Retrieve data from the key "dates"
+     * We declared a dataType here, so RealtimeDB knows that we want to convert to Date
+     */
     public LiveData<Map<String, Date>> getIdToDatesMap() {
         if (idToDatesMap.getValue() == null) {
             onlineDB.child("/dates/").addValueEventListener(new ValueEventListener() {
@@ -39,7 +44,6 @@ public class AssignmentRepository {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     GenericTypeIndicator<Map<String, Date>> dataType = new GenericTypeIndicator<Map<String, Date>>() {};
                     idToDatesMap.postValue(dataSnapshot.getValue(dataType));
-//                    Log.i("DEBUG", dataSnapshot.getValue(dataType).values().toString());
                 }
 
                 @Override
@@ -52,6 +56,13 @@ public class AssignmentRepository {
         return idToDatesMap;
     }
 
+    /**
+     * getTodayAsmList()
+     * Retrieve data of the assignment due today
+     * First, we retrieve all the dates
+     * Get ids of dates that are today'dates
+     * Then, we retrieve data from "titles" and "units" of all those ids
+     */
     public LiveData<List<List<String>>> getTodayAsmList() {
 
         //  Get the IDs of assignments on today
@@ -112,7 +123,10 @@ public class AssignmentRepository {
 
         return todayAsmList;
     }
-
+    /**
+     * getAsmAllDetailsMap()
+     * Retrieve the whole "assignment_records" document
+     */
     public LiveData<Map<String, Object>> getAsmAllDetailsMap() {
 
         //  Get all the details of assignment's dates, title and unit name

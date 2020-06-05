@@ -55,6 +55,8 @@ public class PomoHistoryFragment extends Fragment {
         itemsAdapter = new PmHistoryAdapter(new ArrayList<PomoRecord>());
         itemsRecyclerView.setAdapter(itemsAdapter);
 
+        //  Declare a PomoViewModel that observes for any changes in the pomodoro records table (add, update, delete rows)
+        //  Update the RecylerView's Adapter accordingly to update the UIs
         ViewModelProvider.AndroidViewModelFactory avmFactory = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication());
         sViewModel =  new ViewModelProvider(requireActivity(), avmFactory).get(PomoViewModel.class);
         sViewModel.getPomoRecords().observe(getViewLifecycleOwner(), new Observer<List<PomoRecord>>() {
@@ -92,13 +94,13 @@ public class PomoHistoryFragment extends Fragment {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
             holder.pmDate.setText(formatter.format(pomoItem.getPmDate()));
             if (pomoItem.getPmIsSuccessful()) {
-//                holder.pmDescription.setText("Successfully studied for a duration of " +  pomoItem.getPmSeconds()/60 + " minutes.");
-                holder.pmDescription.setText("Successfully studied for a duration of " +  pomoItem.getPmSeconds() + " seconds.");
+                holder.pmDescription.setText("Successfully studied for a duration of " +  pomoItem.getPmSeconds()/60 + " minutes and " + pomoItem.getPmSeconds()%60 + " seconds.");
+//                holder.pmDescription.setText("Successfully studied for a duration of " +  pomoItem.getPmSeconds() + " seconds.");
                 holder.pmIsSuccessful.setImageResource(R.drawable.ic_tick);
             }
             else {
 //                holder.pmDescription.setText("You missed a pomodoro. You were focus for " + pomoItem.getPmSeconds()/60 + " minutes though, well done!");
-                holder.pmDescription.setText("You missed a pomodoro. You were focus for " + pomoItem.getPmSeconds() + " seconds though, well done!");
+                holder.pmDescription.setText("You missed a pomodoro. You were focus for " + pomoItem.getPmSeconds()/60 + " minutes and " + pomoItem.getPmSeconds()%60 + " seconds though, well done!");
                 holder.pmIsSuccessful.setImageResource(R.drawable.ic_fail);
             }
         }

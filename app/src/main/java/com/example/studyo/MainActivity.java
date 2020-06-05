@@ -18,7 +18,9 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager = getSupportFragmentManager();
+    //  fragmentSavedStates store the state instance of three main screens
     private Map<String, Fragment.SavedState> fragmentSavedStates = new HashMap<>();
+    //  fragmentTags store the string tags of each three main screens
     private String[] fragmentTags;
 
     @Override
@@ -28,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentTags = getResources().getStringArray(R.array.fragment_tags);
 
-        getSupportActionBar().hide();
+        getSupportActionBar().hide();   //  hide the app title bar
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
         bottomNav.setSelectedItemId(R.id.action_timer);
         bottomNav.setOnNavigationItemSelectedListener(new navItemListener());

@@ -61,14 +61,30 @@ public class AssignmentRecordFragment extends Fragment {
         asmRecordView.setLayoutManager(new LinearLayoutManager(getContext()));
         asmRecordAdapter = new AssignmentRecordAdapter();
 
+        //  Declare a AssignmentViewModel that observes for any changes in the assignment record Firebase's Realtime Database
+        //  Update the RecylerView's Adapter accordingly to update the UIs
         asmViewModel = new AssignmentViewModel();
         asmViewModel.getAsmAllDetailsList().observe(getViewLifecycleOwner(), new Observer<Map<String, Object>>() {
             @Override
             public void onChanged(Map<String, Object> stringObjectMap) {
+                //  Convert data object into three arrays that store:
+                //  Assignment's title, unit name and due date
+
+                //  Get value of key "titles" and "units" in the database
+                //  each of them contains a list of data, signitured by an automatically created key from Realtime Database
+                //  For example:
+                //  titles {
+                //    "fasdkjfjsadkf-this-is-the-id" : "Some string",
+                //    "id-2": "Another string",
+                //    ...
+                //  }
+                //  the type of the value of "titles" is a HashMap<String, String>
                 List<String> asmTitles = new ArrayList<>(((HashMap<String, String>) Objects.requireNonNull(stringObjectMap.get("titles"))).values());
                 List<String> asmUnits = new ArrayList<>(((HashMap<String, String>) Objects.requireNonNull(stringObjectMap.get("units"))).values());
                 List<Date> asmDates = new ArrayList<>();
 
+                //  With Date type, Realtime Database convert the type to HashMap<String, Object>
+                //  We use JSON to facilitate this conversion from Object to Date
                 JSONObject asmDatesJson;
                 try {
                     asmDatesJson = new JSONObject(stringObjectMap.get("dates").toString());
