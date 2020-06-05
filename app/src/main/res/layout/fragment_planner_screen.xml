@@ -23,26 +23,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recyclerview_calendar_grid" />
 
-    <Button
+    <ImageButton
         android:id="@+id/button_next_month"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        app:srcCompat="@drawable/ic_next"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:text="N"
+        android:background="@drawable/icon_button_shape"
+        android:textColor="@color/white"
+        android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/text_cal_mon_year"
         app:layout_constraintTop_toTopOf="@+id/button_prev_month" />
 
-    <Button
+    <ImageButton
         android:id="@+id/button_prev_month"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="P"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/icon_button_shape"
+        android:textColor="@color/white"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_back" />
 
     <TextView
         android:id="@+id/text_cal_mon_year"
@@ -51,6 +57,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:text="TextView"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/button_prev_month"
         app:layout_constraintStart_toEndOf="@+id/button_prev_month"
@@ -58,12 +65,16 @@
 
     <Button
         android:id="@+id/button_add_assignment"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:background="@drawable/icon_button_shape"
         android:text="+"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -144,7 +155,7 @@
         android:layout_weight="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" >
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
     </androidx.recyclerview.widget.RecyclerView>
 

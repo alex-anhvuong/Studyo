@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentTags = getResources().getStringArray(R.array.fragment_tags);
 
+        getSupportActionBar().hide();
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
         bottomNav.setSelectedItemId(R.id.action_timer);
         bottomNav.setOnNavigationItemSelectedListener(new navItemListener());

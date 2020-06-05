@@ -2,6 +2,7 @@ package com.example.studyo;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.studyo.viewmodels.AssignmentViewModel;
@@ -63,8 +65,8 @@ public class PlannerScreenFragment extends Fragment {
         calendarGridView = view.findViewById(R.id.recyclerview_calendar_grid);
         todayAsmListView = view.findViewById(R.id.recyclerview_today_asm);
         monAndYearText = view.findViewById(R.id.text_cal_mon_year);
-        Button prevButton = view.findViewById(R.id.button_prev_month);
-        Button nextButton = view.findViewById(R.id.button_next_month);
+        ImageButton prevButton = view.findViewById(R.id.button_prev_month);
+        ImageButton nextButton = view.findViewById(R.id.button_next_month);
         prevButton.setOnClickListener(new SwitchMonthOnClickListener());
         nextButton.setOnClickListener(new SwitchMonthOnClickListener());
 
@@ -260,9 +262,9 @@ public class PlannerScreenFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            String navigation = ((Button)v).getText().toString();
+            int navigation = ((ImageButton)v).getId();
             switch (navigation) {
-                case "N":
+                case R.id.button_next_month:
                     calendar.add(Calendar.MONTH, 1);
                     UpdateCalendar();
                     break;
