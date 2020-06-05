@@ -1,0 +1,53 @@
+Week6
+-----------------
+- Collecting ideas from similar apps: Forest, Flip, Boosted, etc.
+- Sketching some wireframes of the pomodoro timer
+-----------------
+- Deciding that I will add another functionality called Planner
+- Collecting info of assignment planning apps: Calendar, Trello
+FRI-----------------
+- Initialise project folder
+
+Week7:
+TUE-----------------
+- Build the timer functionality
+- Add a progress view to show the timer status, instead of using pure text
+WED-----------------
+- Update the progress view according to the seconds variable used for counting down
+- Add Room database, ViewModel, Repository for saving pomodoro records
+THU-----------------
+- Trying to get the ViewModel working
+FRI-----------------
+- Got the ViewModel working
+- Add the fragment for Statistic page, display data saved from Pomodoro Fragment in this page
+
+Week8:
+TUE-----------------
+- Working on how to save fragment state when switching between timer fragment and statistic fragment
+THU-----------------
+- Solve the above problem
+
+Week9:
+MON-----------------
+- Create the UIs for the Statistic page
+TUE-----------------
+- Add some icons for the pomodoro records
+- Fix some issues with displaying the chronologically reversed order of the records
+WED-----------------
+- Create a Calendar widget for the Planner fragment, I built my own using RecyclerView
+- Create two buttons to switch between Months
+- Debugging the above functionality
+
+Week10:
+THU-----------------
+- Start using Firebase functionality to add assignment record to online server
+- Make the add assignment fragment to display and prompt for the above
+
+WEEK11:
+- Make the retrival functionality of the online database
+- Display the assignment records in the Statistic page.
+- Fetching real-time data to the Calendar widget.
+
+WEEK12:
+- Refine documentation, commenting
+- Add style and logos to the app

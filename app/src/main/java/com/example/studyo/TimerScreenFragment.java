@@ -101,7 +101,7 @@ public class TimerScreenFragment extends Fragment {
                 //  Continue the timer from timeLeft
                 seconds = timeLeft;
                 timerView.setText(SecondsToTimeFormat(seconds));
-                setStudyTimerBarStatus(100 /(float)initSecs * (float)seconds);
+                    setStudyTimerBarStatus(100 /(float)initSecs * (float)seconds);
                 timerHandler.post(timerRunnable);
                 triggerTimerButton.setText("Stop");
             }
@@ -152,7 +152,7 @@ public class TimerScreenFragment extends Fragment {
                 ((Button)v).setText("Start");
                 timerView.setText(SecondsToTimeFormat(initSecs));
                 //  Reset the progress to our initial time
-                setStudyTimerBarStatus(initSecs - 10 * ONE_MINUTE);
+                setStudyTimerBarStatus(initSecs/ONE_MINUTE - 10);
                 //  Post this result to the database as a failed attempt
                 //  pmDate = current Date
                 //  pmTime = initSecs - seconds;
@@ -197,7 +197,7 @@ public class TimerScreenFragment extends Fragment {
         triggerTimerButton.setText("Start");
         timerHandler.removeCallbacks(timerRunnable);
         timerView.setText(SecondsToTimeFormat(initSecs));
-        setStudyTimerBarStatus(initSecs - 10 * ONE_MINUTE);
+        setStudyTimerBarStatus(initSecs/ONE_MINUTE - 10);
         //  Post this result to the database as a successful attempt
         //  pmDate = current Date
         //  pmTime = initSecs;
